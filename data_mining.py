@@ -25,7 +25,7 @@ def create_sequences(data, sequence_length):
 
 # Create sequences and corresponding labels for training set
 
-'''
+
 def create_dataset(df):
 
   sequences = df.astype(np.float32).to_numpy().tolist()
@@ -33,13 +33,13 @@ def create_dataset(df):
   dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
 
   n_features = torch.stack(dataset).shape[1]
-  seq_len=25
-  #n_seq, seq_len, n_features = torch.stack(dataset).shape
-  print(n_seq, seq_len, n_features)
+  #seq_len=25
+  n_seq, seq_len, n_features = torch.stack(dataset).shape
+  #print(n_seq, seq_len, n_features)
   
 
   return dataset, seq_len, n_features
-'''
+
 
 def clean_and_get_Data(filename):
     RANDOM_SEED = 42
@@ -108,35 +108,35 @@ def clean_and_get_Data(filename):
     datas=df.iloc[:, :].values
     print(datas.shape)
     sequences = create_sequences(datas, 25)
-    print('Sequences',len(sequences))
-    '''
+    #print('Sequences',len(sequences))
+    
     train_df, val_df = train_test_split(
-    sequences,
+    df,
     test_size=0.15,
     random_state=RANDOM_SEED
     )
 
     val_df, test_df = train_test_split(
-    sequences,
+    df,
     test_size=0.33, 
     random_state=RANDOM_SEED
     )
-    '''
-    train_size = int(0.8 * len(sequences))
     
-    train_data = sequences[:train_size]
-    test_data = sequences[train_size:]
+    #train_size = int(0.8 * len(sequences))
+    
+    #train_data = sequences[:train_size]
+    #test_data = sequences[train_size:]
     #print(train_data.shape)
     # Crear DataLoader para cargar los datos
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=True)
-    test_loader = torch.utils.data.DataLoader(test_data, batch_size=1, shuffle=False)
+    #train_loader = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=True)
+    #test_loader = torch.utils.data.DataLoader(test_data, batch_size=1, shuffle=False)
     
-    #train_dataset, seq_len, n_features = create_dataset(train_df)
-    #val_dataset, _, _ = create_dataset(val_df)
-    #test_normal_dataset, _, _ = create_dataset(test_df)
-    seq_len=25
-    n_features=5
-    return train_loader,seq_len,n_features,test_loader
+    train_dataset, seq_len, n_features = create_dataset(train_df)
+    val_dataset, _, _ = create_dataset(val_df)
+    test_normal_dataset, _, _ = create_dataset(test_df)
+    #seq_len=25
+    #n_features=5
+    return train_dataset,seq_len,n_features,val_dataset
 #test_anomaly_dataset, _, _ = create_dataset(anomaly_df)
 
 
