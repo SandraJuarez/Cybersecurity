@@ -26,6 +26,7 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
 
     train_losses = []
     for seq_true in train_dataset:
+      seq_true = seq_true.float()
       optimizer.zero_grad()
 
       seq_true = seq_true.to(device)
@@ -42,7 +43,7 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
     model = model.eval()
     with torch.no_grad():
       for seq_true in val_dataset:
-
+        seq_true = seq_true.float()
         seq_true = seq_true.to(device)
         seq_pred = model(seq_true)
 
