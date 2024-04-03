@@ -31,6 +31,9 @@ def create_dataset(df):
   sequences = df.astype(np.float32).to_numpy().tolist()
 
   dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
+  datasetT=torch.stack(dataset)
+  datasetS=torch.stack(create_sequences(datasetT,25))
+  print('el shape del dataset',datasetS.shape)
 
   n_features = torch.stack(dataset).shape[1]
   #seq_len=25
