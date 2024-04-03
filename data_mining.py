@@ -31,8 +31,18 @@ def clean_and_get_Data(filename):
     torch.manual_seed(RANDOM_SEED)
     data = pd.read_csv(filename)
     df = pd.DataFrame(data)
+    # primero, convertimos la columna 'Source' a tipo de datos de cadena (str)
     df['Source'] = df['Source'].str.replace('.', '')
     df['Destination'] = df['Destination'].str.replace('.', '')
+    df['Source'] = df['Source'].astype(str)
+    df['Destination'] = df['Destination'].astype(str)
+    
+
+    # Usamos expresiones regulares para encontrar solo las entradas que contienen solo números
+    df = df[df['Source'].str.match(r'^\d+$')]
+    df = df[df['Destination'].str.match(r'^\d+$')]
+
+    '''
     protocol_mapping = {
         'TCP': 1,
         'UDP': 2,
@@ -45,10 +55,28 @@ def clean_and_get_Data(filename):
         'SNMP': 9,
         'DHCP': 10,
         'DNS': 11,
-        'ICMP':12
-    }
+        'ICMP':12,
+        'ARP':13,
+        'SSDP':14,
+        'TLSv1.2':15,
+        'TLSv1.3':15,
+        'MDNS':16,
+        'ICMPv6':17,
+        'SSL':18,
+        'SIGCOMP':19,
+        'CLASSIC-STU':20,
+        'LLDP':21,
 
-    df['Protocol'] = df['Protocol'].replace(protocol_mapping)
+    }
+    '''
+    unique_protocol_values = df['Protocol'].unique()
+
+    # Crear un mapeo basado en la lista de valores únicos
+    protocol_mapping = {protocol: index for index, protocol in enumerate(unique_protocol_values, start=1)}
+
+    # Reemplazar las siglas de protocolos con los índices correspondientes
+    df['Protocol'] = df['Protocol'].map(protocol_mapping)
+
     df = df.drop(columns=['Info','No.'])
     # Suponiendo que 'df' es tu DataFrame y 'columns_to_normalize' es una lista de columnas a normalizar
     columns_to_normalize = ['Time', 'Source', 'Destination','Length']  # Lista de columnas a normalizar
