@@ -108,7 +108,7 @@ def clean_and_get_Data(filename):
     # Normalizar las columnas seleccionadas
     df[columns_to_normalize] = scaler.fit_transform(df[columns_to_normalize])
     #And we save the clean dataset
-    file_name = 'clean_dataset' + filename + '.csv'
+    file_name = 'clean_dataset' + filename 
     df.to_csv(file_name, index=False)
 
     
