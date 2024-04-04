@@ -26,10 +26,17 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
 
     train_losses = []
     for seq_true in train_dataset:
+      #print(seq_true.shape)
+      #seq_true=seq_true.reshape((1,10,3))
+      seq_true=seq_true.reshape((25,1,3))
+      #print("final",seq_true.shape)
+
       optimizer.zero_grad()
 
       seq_true = seq_true.to(device)
       seq_pred = model(seq_true)
+      seq_pred=seq_pred.reshape((25,1,3))
+
 
       loss = criterion(seq_pred, seq_true)
 
@@ -38,13 +45,16 @@ def train_model(model, train_dataset, val_dataset, n_epochs):
 
       train_losses.append(loss.item())
 
+    #print("termino la epoca")
     val_losses = []
     model = model.eval()
     with torch.no_grad():
       for seq_true in val_dataset:
+        seq_true=seq_true.reshape((25,1,3))
 
         seq_true = seq_true.to(device)
         seq_pred = model(seq_true)
+        seq_pred=seq_pred.reshape((25,1,3))
 
         loss = criterion(seq_pred, seq_true)
         val_losses.append(loss.item())

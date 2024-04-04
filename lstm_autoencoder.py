@@ -36,15 +36,19 @@ class Encoder(nn.Module):
 
   def forward(self, x):
     #x = x.reshape((1, self.seq_len, self.n_features))
-
+    #print(x.shape)
     x, (_, _) = self.rnn1(x)
+    
+    
     x, (hidden_n, _) = self.rnn2(x)
+    
 
-    return hidden_n.reshape((self.n_features, self.embedding_dim))
+    #return hidden_n.reshape((self.n_features, self.embedding_dim))
+    return x
   
 class Decoder(nn.Module):
 
-  def __init__(self, seq_len, input_dim=64,n_features=3):
+  def __init__(self, seq_len, input_dim=64, n_features=2):
     super(Decoder, self).__init__()
 
     self.seq_len, self.input_dim = seq_len, input_dim
@@ -67,8 +71,9 @@ class Decoder(nn.Module):
     self.output_layer = nn.Linear(self.hidden_dim, n_features)
 
   def forward(self, x):
-    x = x.repeat(self.seq_len, self.n_features)
-    x = x.reshape((self.n_features, self.seq_len, self.input_dim))
+    
+    #x = x.repeat(self.seq_len, self.n_features)
+    #x = x.reshape((self.n_features, self.seq_len, self.input_dim))
 
     x, (hidden_n, cell_n) = self.rnn1(x)
     x, (hidden_n, cell_n) = self.rnn2(x)
@@ -85,6 +90,7 @@ class RecurrentAutoencoder(nn.Module):
         self.decoder = Decoder(seq_len, embedding_dim, n_features).to(device)
 
     def forward(self, x):
+        
         x = self.encoder(x)
         x = self.decoder(x)
 
