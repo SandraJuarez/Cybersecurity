@@ -44,7 +44,7 @@ class Encoder(nn.Module):
   
 class Decoder(nn.Module):
 
-  def __init__(self, seq_len, input_dim=64, n_features=1):
+  def __init__(self, seq_len, input_dim=64,n_features=3):
     super(Decoder, self).__init__()
 
     self.seq_len, self.input_dim = seq_len, input_dim
@@ -68,7 +68,7 @@ class Decoder(nn.Module):
 
   def forward(self, x):
     x = x.repeat(self.seq_len, self.n_features)
-    #x = x.reshape((self.n_features, self.seq_len, self.input_dim))
+    x = x.reshape((self.n_features, self.seq_len, self.input_dim))
 
     x, (hidden_n, cell_n) = self.rnn1(x)
     x, (hidden_n, cell_n) = self.rnn2(x)

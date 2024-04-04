@@ -32,19 +32,20 @@ def create_dataset(df):
 
   dataset = [torch.tensor(s).unsqueeze(1).float() for s in sequences]
   datasetT=torch.stack(dataset)
-  datasetS=torch.stack(create_sequences(datasetT,25))
+  datasetS=torch.stack(create_sequences(datasetT,10))
   print('el shape del dataset',datasetS.shape)
-
-  n_features = torch.stack(dataset).shape[1]
-  #seq_len=25
-  n_seq, seq_len, n_features = torch.stack(dataset).shape
-  #print(n_seq, seq_len, n_features)
+  n_seq=datasetS.shape[0]
+  seq_len=datasetS.shape[1]
+  n_features = datasetS.shape[2]
+  
+  
+  print(n_seq, seq_len, n_features)
   
 
   return dataset, seq_len, n_features
 
 
-def clean_and_get_Data(filename):
+def clean_and_get_Data(filename,seq_len):
     RANDOM_SEED = 42
     np.random.seed(RANDOM_SEED)
     torch.manual_seed(RANDOM_SEED)
@@ -61,33 +62,6 @@ def clean_and_get_Data(filename):
     df = df[df['Source'].str.match(r'^\d+$')]
     df = df[df['Destination'].str.match(r'^\d+$')]
 
-    '''
-    protocol_mapping = {
-        'TCP': 1,
-        'UDP': 2,
-        'HTTP': 3,
-        'HTTPS': 4,
-        'FTP': 5,
-        'SMTP': 6,
-        'POP3': 7,
-        'IMAP': 8,
-        'SNMP': 9,
-        'DHCP': 10,
-        'DNS': 11,
-        'ICMP':12,
-        'ARP':13,
-        'SSDP':14,
-        'TLSv1.2':15,
-        'TLSv1.3':15,
-        'MDNS':16,
-        'ICMPv6':17,
-        'SSL':18,
-        'SIGCOMP':19,
-        'CLASSIC-STU':20,
-        'LLDP':21,
-
-    }
-    '''
     unique_protocol_values = df['Protocol'].unique()
 
     # Crear un mapeo basado en la lista de valores únicos
@@ -96,9 +70,9 @@ def clean_and_get_Data(filename):
     # Reemplazar las siglas de protocolos con los índices correspondientes
     df['Protocol'] = df['Protocol'].map(protocol_mapping)
 
-    df = df.drop(columns=['Info','No.','Time','Source','Destination'])
+    df = df.drop(columns=['Info','No.','Source','Destination'])
     # Suponiendo que 'df' es tu DataFrame y 'columns_to_normalize' es una lista de columnas a normalizar
-    columns_to_normalize = ['Length','Protocol']  # Lista de columnas a normalizar
+    columns_to_normalize = ['Time','Length','Protocol']  # Lista de columnas a normalizar
     #df = df.drop(columns=[])
 
     scaler = MinMaxScaler()  # Inicializar el MinMaxScaler
@@ -111,7 +85,7 @@ def clean_and_get_Data(filename):
 
     datas=df.iloc[:, :].values
     print(datas.shape)
-    sequences = create_sequences(datas, 10)
+    sequences = create_sequences(datas, seq_len)
     #print('Sequences',len(sequences))
     
     train_df, val_df = train_test_split(
@@ -135,7 +109,7 @@ def clean_and_get_Data(filename):
     #train_loader = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=True)
     #test_loader = torch.utils.data.DataLoader(test_data, batch_size=1, shuffle=False)
     
-    train_dataset, seq_len, n_features = create_dataset(train_df)
+    train_dataset, seq_len, n_features= create_dataset(train_df)
     val_dataset, _, _ = create_dataset(val_df)
     test_normal_dataset, _, _ = create_dataset(test_df)
     #seq_len=25
