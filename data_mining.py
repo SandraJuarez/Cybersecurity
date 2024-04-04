@@ -96,9 +96,10 @@ def clean_and_get_Data(filename):
     # Reemplazar las siglas de protocolos con los índices correspondientes
     df['Protocol'] = df['Protocol'].map(protocol_mapping)
 
-    df = df.drop(columns=['Info','No.'])
+    df = df.drop(columns=['Info','No.','Time','Source','Destination'])
     # Suponiendo que 'df' es tu DataFrame y 'columns_to_normalize' es una lista de columnas a normalizar
-    columns_to_normalize = ['Time', 'Source', 'Destination','Length']  # Lista de columnas a normalizar
+    columns_to_normalize = ['Length','Protocol']  # Lista de columnas a normalizar
+    #df = df.drop(columns=[])
 
     scaler = MinMaxScaler()  # Inicializar el MinMaxScaler
 
@@ -110,7 +111,7 @@ def clean_and_get_Data(filename):
 
     datas=df.iloc[:, :].values
     print(datas.shape)
-    sequences = create_sequences(datas, 25)
+    sequences = create_sequences(datas, 10)
     #print('Sequences',len(sequences))
     
     train_df, val_df = train_test_split(
